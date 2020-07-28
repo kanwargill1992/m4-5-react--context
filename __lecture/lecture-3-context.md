@@ -149,30 +149,36 @@ Update the following components to use context
 ---
 
 ```jsx
+const UserContext = React.createContext(null);
+
 const App = () => {
   const [user, setUser] = React.useState({ username: "Alfalfa" });
 
-  return <Home user={user} setUser={setUser} />;
+  return;
+  <USerContext value={{ user, setUser }}>
+    <Home />;
+  </UserContext>;
 };
 
-const Home = ({ user, setUser }) => {
+const Home = () => {
   return (
     <>
-      <Header user={user} setUser={setUser} />
+      <Header />
       <MainContent />
     </>
   );
 };
 
-const Header = ({ user, setUser }) => {
+const Header = () => {
   return (
     <header>
-      <Navigation user={user} setUser={setUser} />
+      <Navigation />
     </header>
   );
 };
 
-const Navigation = ({ user, setUser }) => {
+const Navigation = () => {
+  const { user, setUser } = React.useContext(UserContext);
   return (
     <nav>
       <ul>
@@ -196,18 +202,20 @@ const Navigation = ({ user, setUser }) => {
 ---
 
 ```jsx
+const DialogContext = React.createContext(null);
 const App = () => {
   const [dialog, setDialog] = React.useState(null);
 
   return (
-    <>
-      <MainContent dialog={dialog} setDialog={setDialog} />
-      <Dialog currentDialog={dialog} />
-    </>
+    <DialogContext.Provider value={{ dialog, setDialog }}>
+      <MainContent />
+      <Dialog />
+    </DialogContext.Provider>
   );
 };
 
-const MainContent = ({ dialog, setDialog }) => {
+const MainContent = () => {
+  const { setDialog } = React.useContext(DialogContext);
   return (
     <>
       <Sidebar>
@@ -232,6 +240,7 @@ const Dialog = ({ currentDialog }) => {
 ---
 
 ```js live=true
+const AppContext = React.createContext(null);
 const App = () => {
   const [count, setCount] = React.useState(0);
   const [name, setName] = React.useState("");
@@ -240,24 +249,21 @@ const App = () => {
   const decrement = () => setCount(count - 1);
 
   return (
-    <>
+    <AppContext.Provider value={{ count, name, setName, increment, decrement }}>
       Playing as: {name}
       <CountDisplay count={count} />
-      <Actions
-        increment={increment}
-        decrement={decrement}
-        name={name}
-        setName={setName}
-      />
-    </>
+      <Actions />
+    </AppContext.Provider>
   );
 };
 
-const CountDisplay = ({ count }) => {
-  return <h1>{count} clicks!</h1>;
+const CountDisplay = () => {
+  const { count } = React.useContext(AppContext);
+  return <h1> clicks!</h1>;
 };
 
-const Actions = ({ increment, decrement, name, setName }) => {
+const Actions = () => {
+  const { increment, decrement, name, setName } = React.useContext(AppContext);
   return (
     <div>
       <TextInput label="Name" value={name} setValue={setName} />
